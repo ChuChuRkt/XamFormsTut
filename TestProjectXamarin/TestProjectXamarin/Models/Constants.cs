@@ -18,5 +18,7 @@ namespace TestProjectXamarin.Models
         public static string LoginUrl = "https://test.com/api/Auth/Login";
 
         public static string NoInternetText = "No Internet, please reconnect";
+
+        public static string SettingsScreenTitle = "Settings";
     }
 }

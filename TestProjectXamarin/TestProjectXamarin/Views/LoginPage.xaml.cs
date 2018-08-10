@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TestProjectXamarin.Models;
+using TestProjectXamarin.Views.Menu;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -18,7 +19,7 @@ namespace TestProjectXamarin.Views
             Init();
 		}
 
-        void Init()
+	    private void Init()
         {
             BackgroundColor = Constants.BackgroundColor;
             Lbl_Username.TextColor = Constants.MainTextColor;
@@ -30,21 +31,35 @@ namespace TestProjectXamarin.Views
             Entry_Password.Completed += (s, e) => SignInProcedure(s, e);
         }
 
-        async void SignInProcedure(object sender, EventArgs e)
+	    private async void SignInProcedure(object sender, EventArgs e)
         {
             User user = new User(Entry_Username.Text, Entry_Password.Text);
             if(user.CheckInformation())
             {
-                DisplayAlert("Login", "Login Success", "Ok");
-                var result = await App.RestService.Login(user);
-                if (result.access_token != null)
+                ActivitySpinner.IsVisible = true;
+                //var result = await App.RestService.Login(user);
+                var result = new Token();
+                await DisplayAlert("Login", "Login Success", "Ok");
+                
+                if(result != null)
                 {
-                    App.UserDatabase.SaveUser(user);
+                    ActivitySpinner.IsVisible = false;
+                    //App.UserDatabase.SaveUser(user);
+                    //App.TokenDatabase.SaveToken(result);
+                    if(Device.OS == TargetPlatform.Android)
+                    {
+                        Application.Current.MainPage = new NavigationPage(new MasterDetail());
+                    }
+                    //else if(Device.OS == TargetPlatform.iOS)
+                    //{
+                    //    await Navigation.PushModalAsync(new NavigationPage(new MasterDetail()));
+                    //}
                 }
             }
             else
             {
-                DisplayAlert("Login", "Login Failed", "Ok");
+                await DisplayAlert("Login", "Login Failed", "Ok");
+                ActivitySpinner.IsVisible = false;
             }
         }
     }
